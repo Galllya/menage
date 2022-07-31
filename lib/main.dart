@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:manage/common/network/dio_factory.dart';
 import 'package:manage/common/network/rest_client.dart';
@@ -8,16 +9,21 @@ import 'package:manage/common/ui/theme.dart';
 import 'package:manage/pages/home/view/home_page.dart';
 import 'package:provider/provider.dart';
 
+String api = '';
+String apiFile = '';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  const apiUrl = String.fromEnvironment(
-    'api',
-    defaultValue: 'http://10.0.2.2:1337/api/',
-  );
+  if (kIsWeb) {
+    api = 'http://localhost:1337/api/';
+    apiFile = 'http://localhost:1337';
+  } else {
+    api = 'http://10.0.2.2:1337/api/';
+    apiFile = 'http://10.0.2.2:1337';
+  }
 
   final restClient = RestClient(DioFactory.createDio(
-    apiUrl,
+    api,
   ));
   runApp(MultiProvider(providers: [
     Provider<TextRepository>(

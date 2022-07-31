@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:manage/common/ui/colors.dart';
+import 'package:manage/main.dart';
 
 class AudioContainer extends StatefulWidget {
   final String? url;
@@ -33,7 +34,7 @@ class _AudioContainerState extends State<AudioContainer> {
     if (widget.url == null) {
       await audioPlayer.setFilePath(widget.audioFile!.path);
     } else {
-      await audioPlayer.setUrl('http://10.0.2.2:1337${widget.url}');
+      await audioPlayer.setUrl('$apiFile${widget.url}');
     }
   }
 

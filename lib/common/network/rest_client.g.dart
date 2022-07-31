@@ -22,7 +22,8 @@ class _RestClient implements RestClient {
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<Pagination<BaseTextModel>>(
             Options(method: 'GET', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/texts', queryParameters: queryParameters, data: _data)
+                .compose(_dio.options, '/texts',
+                    queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = Pagination<BaseTextModel>.fromJson(
       _result.data!,
@@ -40,7 +41,8 @@ class _RestClient implements RestClient {
     _data.addAll(textData);
     await _dio.fetch<void>(_setStreamType<void>(
         Options(method: 'POST', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/texts', queryParameters: queryParameters, data: _data)
+            .compose(_dio.options, '/texts',
+                queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     return null;
   }
@@ -53,7 +55,8 @@ class _RestClient implements RestClient {
     final _data = <String, dynamic>{};
     await _dio.fetch<void>(_setStreamType<void>(
         Options(method: 'DELETE', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/texts/${id}', queryParameters: queryParameters, data: _data)
+            .compose(_dio.options, '/texts/${id}',
+                queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     return null;
   }
@@ -67,7 +70,8 @@ class _RestClient implements RestClient {
     _data.addAll(textData);
     await _dio.fetch<void>(_setStreamType<void>(
         Options(method: 'PUT', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/texts/${id}', queryParameters: queryParameters, data: _data)
+            .compose(_dio.options, '/texts/${id}',
+                queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     return null;
   }
@@ -79,10 +83,11 @@ class _RestClient implements RestClient {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<Pagination<BaseFileModel>>(Options(
-                method: 'GET', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/media-files', queryParameters: queryParameters, data: _data)
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+        _setStreamType<Pagination<BaseFileModel>>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/media-files',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = Pagination<BaseFileModel>.fromJson(
       _result.data!,
       (json) => BaseFileModel.fromJson(json as Map<String, dynamic>),
@@ -99,7 +104,8 @@ class _RestClient implements RestClient {
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<Pagination<InfoDataTypeModel>>(
             Options(method: 'GET', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/types', queryParameters: queryParameters, data: _data)
+                .compose(_dio.options, '/types',
+                    queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = Pagination<InfoDataTypeModel>.fromJson(
       _result.data!,
@@ -109,15 +115,52 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<void> addFile({required formData, required datatype, required mimeType}) async {
+  Future<List<LoadFileModel>> addFile(
+      {required formData, required datatype, required mimeType}) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'datatype': datatype, r'mimeType': mimeType};
+    final queryParameters = <String, dynamic>{
+      r'datatype': datatype,
+      r'mimeType': mimeType
+    };
+    final _headers = <String, dynamic>{};
+    final _data = formData;
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<LoadFileModel>>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/upload',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    var value = _result.data!
+        .map((dynamic i) => LoadFileModel.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  Future<void> postMediaFiles({required media}) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(formData);
+    _data.addAll(media);
     await _dio.fetch<void>(_setStreamType<void>(
         Options(method: 'POST', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/upload', queryParameters: queryParameters, data: _data)
+            .compose(_dio.options, '/media-files',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    return null;
+  }
+
+  @override
+  Future<void> deleteFile({required id}) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    await _dio.fetch<void>(_setStreamType<void>(
+        Options(method: 'DELETE', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/media-files/${id}',
+                queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     return null;
   }

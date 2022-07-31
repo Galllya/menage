@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:manage/pages/home/bloc/home_bloc.dart';
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage> {
           title: const Text('Главная'),
         ),
         body: const HomeView(),
-        drawer: const DrawerCustom(),
+        drawer: kIsWeb ? null : const DrawerCustom(),
       ),
     );
   }

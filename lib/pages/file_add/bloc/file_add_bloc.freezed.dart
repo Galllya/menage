@@ -25,9 +25,11 @@ class _$FileAddEventTearOff {
     return const _load();
   }
 
-  _AddFile addFile(FileLoadModel fileModel) {
+  _AddFile addFile(File fileModel, int type, String typeForFile) {
     return _AddFile(
       fileModel,
+      type,
+      typeForFile,
     );
   }
 }
@@ -41,21 +43,22 @@ mixin _$FileAddEvent {
   TResult when<TResult extends Object?>({
     required TResult Function() started,
     required TResult Function() load,
-    required TResult Function(FileLoadModel fileModel) addFile,
+    required TResult Function(File fileModel, int type, String typeForFile)
+        addFile,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? load,
-    TResult Function(FileLoadModel fileModel)? addFile,
+    TResult Function(File fileModel, int type, String typeForFile)? addFile,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? load,
-    TResult Function(FileLoadModel fileModel)? addFile,
+    TResult Function(File fileModel, int type, String typeForFile)? addFile,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -138,7 +141,8 @@ class _$_Started implements _Started {
   TResult when<TResult extends Object?>({
     required TResult Function() started,
     required TResult Function() load,
-    required TResult Function(FileLoadModel fileModel) addFile,
+    required TResult Function(File fileModel, int type, String typeForFile)
+        addFile,
   }) {
     return started();
   }
@@ -148,7 +152,7 @@ class _$_Started implements _Started {
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? load,
-    TResult Function(FileLoadModel fileModel)? addFile,
+    TResult Function(File fileModel, int type, String typeForFile)? addFile,
   }) {
     return started?.call();
   }
@@ -158,7 +162,7 @@ class _$_Started implements _Started {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? load,
-    TResult Function(FileLoadModel fileModel)? addFile,
+    TResult Function(File fileModel, int type, String typeForFile)? addFile,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -245,7 +249,8 @@ class _$_load implements _load {
   TResult when<TResult extends Object?>({
     required TResult Function() started,
     required TResult Function() load,
-    required TResult Function(FileLoadModel fileModel) addFile,
+    required TResult Function(File fileModel, int type, String typeForFile)
+        addFile,
   }) {
     return load();
   }
@@ -255,7 +260,7 @@ class _$_load implements _load {
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? load,
-    TResult Function(FileLoadModel fileModel)? addFile,
+    TResult Function(File fileModel, int type, String typeForFile)? addFile,
   }) {
     return load?.call();
   }
@@ -265,7 +270,7 @@ class _$_load implements _load {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? load,
-    TResult Function(FileLoadModel fileModel)? addFile,
+    TResult Function(File fileModel, int type, String typeForFile)? addFile,
     required TResult orElse(),
   }) {
     if (load != null) {
@@ -317,7 +322,7 @@ abstract class _load implements FileAddEvent {
 abstract class _$AddFileCopyWith<$Res> {
   factory _$AddFileCopyWith(_AddFile value, $Res Function(_AddFile) then) =
       __$AddFileCopyWithImpl<$Res>;
-  $Res call({FileLoadModel fileModel});
+  $Res call({File fileModel, int type, String typeForFile});
 }
 
 /// @nodoc
@@ -332,12 +337,22 @@ class __$AddFileCopyWithImpl<$Res> extends _$FileAddEventCopyWithImpl<$Res>
   @override
   $Res call({
     Object? fileModel = freezed,
+    Object? type = freezed,
+    Object? typeForFile = freezed,
   }) {
     return _then(_AddFile(
       fileModel == freezed
           ? _value.fileModel
           : fileModel // ignore: cast_nullable_to_non_nullable
-              as FileLoadModel,
+              as File,
+      type == freezed
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as int,
+      typeForFile == freezed
+          ? _value.typeForFile
+          : typeForFile // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -345,14 +360,18 @@ class __$AddFileCopyWithImpl<$Res> extends _$FileAddEventCopyWithImpl<$Res>
 /// @nodoc
 
 class _$_AddFile implements _AddFile {
-  const _$_AddFile(this.fileModel);
+  const _$_AddFile(this.fileModel, this.type, this.typeForFile);
 
   @override
-  final FileLoadModel fileModel;
+  final File fileModel;
+  @override
+  final int type;
+  @override
+  final String typeForFile;
 
   @override
   String toString() {
-    return 'FileAddEvent.addFile(fileModel: $fileModel)';
+    return 'FileAddEvent.addFile(fileModel: $fileModel, type: $type, typeForFile: $typeForFile)';
   }
 
   @override
@@ -361,12 +380,20 @@ class _$_AddFile implements _AddFile {
         (other is _AddFile &&
             (identical(other.fileModel, fileModel) ||
                 const DeepCollectionEquality()
-                    .equals(other.fileModel, fileModel)));
+                    .equals(other.fileModel, fileModel)) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.typeForFile, typeForFile) ||
+                const DeepCollectionEquality()
+                    .equals(other.typeForFile, typeForFile)));
   }
 
   @override
   int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(fileModel);
+      runtimeType.hashCode ^
+      const DeepCollectionEquality().hash(fileModel) ^
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(typeForFile);
 
   @JsonKey(ignore: true)
   @override
@@ -378,9 +405,10 @@ class _$_AddFile implements _AddFile {
   TResult when<TResult extends Object?>({
     required TResult Function() started,
     required TResult Function() load,
-    required TResult Function(FileLoadModel fileModel) addFile,
+    required TResult Function(File fileModel, int type, String typeForFile)
+        addFile,
   }) {
-    return addFile(fileModel);
+    return addFile(fileModel, type, typeForFile);
   }
 
   @override
@@ -388,9 +416,9 @@ class _$_AddFile implements _AddFile {
   TResult? whenOrNull<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? load,
-    TResult Function(FileLoadModel fileModel)? addFile,
+    TResult Function(File fileModel, int type, String typeForFile)? addFile,
   }) {
-    return addFile?.call(fileModel);
+    return addFile?.call(fileModel, type, typeForFile);
   }
 
   @override
@@ -398,11 +426,11 @@ class _$_AddFile implements _AddFile {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
     TResult Function()? load,
-    TResult Function(FileLoadModel fileModel)? addFile,
+    TResult Function(File fileModel, int type, String typeForFile)? addFile,
     required TResult orElse(),
   }) {
     if (addFile != null) {
-      return addFile(fileModel);
+      return addFile(fileModel, type, typeForFile);
     }
     return orElse();
   }
@@ -443,9 +471,12 @@ class _$_AddFile implements _AddFile {
 }
 
 abstract class _AddFile implements FileAddEvent {
-  const factory _AddFile(FileLoadModel fileModel) = _$_AddFile;
+  const factory _AddFile(File fileModel, int type, String typeForFile) =
+      _$_AddFile;
 
-  FileLoadModel get fileModel => throw _privateConstructorUsedError;
+  File get fileModel => throw _privateConstructorUsedError;
+  int get type => throw _privateConstructorUsedError;
+  String get typeForFile => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   _$AddFileCopyWith<_AddFile> get copyWith =>
       throw _privateConstructorUsedError;

@@ -35,6 +35,7 @@ class FilesView extends StatelessWidget {
                   (e) => Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: FileContainer(
+                        id: e.id,
                         code: e.attributes!.type!.data!.attributes!.code!,
                         url: e.attributes!.media!.data!.first.attributes!.url!),
                   ),

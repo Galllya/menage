@@ -1,8 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:manage/common/repositories/media_repository.dart';
 import 'package:manage/common/repositories/type_repository.dart';
-import 'package:manage/domain/file_load_model.dart';
 import 'package:manage/pages/file_add/bloc/file_add_bloc.dart';
 import 'package:manage/pages/file_add/view/file_add_view.dart';
 
@@ -41,8 +42,12 @@ class _FileAddPageState extends State<FileAddPage> {
           title: const Text('Добавить файл'),
         ),
         body: FileAddView(
-          onSave: ({required FileLoadModel fileModel}) {
-            fileAddBloc.add(FileAddEvent.addFile(fileModel));
+          onSave: ({
+            required File fileModel,
+            required int type,
+            required String typeForFile,
+          }) {
+            fileAddBloc.add(FileAddEvent.addFile(fileModel, type, typeForFile));
           },
         ),
       ),

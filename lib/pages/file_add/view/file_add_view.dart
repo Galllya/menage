@@ -1,22 +1,19 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:manage/common/ui/colors.dart';
 import 'package:manage/common/widgets/error_info_custom.dart';
 import 'package:manage/common/widgets/loading_indicator_custom.dart';
-import 'package:manage/common/widgets/pick_audio.dart';
-import 'package:manage/common/widgets/pick_image.dart';
-import 'package:manage/common/widgets/pick_video.dart';
-import 'package:manage/domain/file_load_model.dart';
+import 'package:manage/common/widgets/pick_file.dart';
+import 'package:manage/common/widgets/snack_bar_custom.dart';
 import 'package:manage/pages/file_add/bloc/file_add_bloc.dart';
 import 'package:manage/common/widgets/video_contaiener.dart';
 import 'package:manage/pages/file_detail/widgets/audio_container.dart';
+import 'package:manage/pages/files/view/files_page.dart';
 
 class FileAddView extends StatefulWidget {
-  final Function({required FileLoadModel fileModel}) onSave;
+  final Function({required File fileModel, required int type, required String typeForFile}) onSave;
   const FileAddView({
     Key? key,
     required this.onSave,
@@ -28,36 +25,32 @@ class FileAddView extends StatefulWidget {
 
 class _FileAddViewState extends State<FileAddView> {
   TypeRus? selectType;
-  Uint8List? image;
-  File? video;
-  File? audio;
+  File? fileSelect;
 
-  void selectImage() async {
-    Uint8List im = await pickImage(ImageSource.gallery);
+  void selectFile() async {
+    File file = await pickFileCustom(type: selectType!.type);
     setState(() {
-      image = im;
-    });
-  }
-
-  void selectVideo() async {
-    XFile im = await pickVideo(ImageSource.gallery);
-
-    File fileVid = File(im.path);
-    setState(() {
-      video = fileVid;
-    });
-  }
-
-  void selectAudio() async {
-    File file = await pickAudio(ImageSource.gallery);
-    setState(() {
-      audio = file;
+      fileSelect = file;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FileAddBloc, FileAddState>(
+    return BlocListener<FileAddBloc, FileAddState>(
+        listener: (BuildContext context, FileAddState state) {
+      state.maybeWhen(
+        orElse: () {},
+        errorAdd: () {
+          CustomScaffoldMessages().show(
+            title: 'Произошла ошибка при отрравки',
+          );
+        },
+        successAdd: () {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (BuildContext context) => const FilesPage()));
+        },
+      );
+    }, child: BlocBuilder<FileAddBloc, FileAddState>(
       builder: (BuildContext context, FileAddState state) {
         return state.maybeWhen(
           orElse: () {
@@ -68,6 +61,9 @@ class _FileAddViewState extends State<FileAddView> {
           },
           error: () {
             return const ErrorInfoCustom();
+          },
+          processingAdd: () {
+            return const LoadingIndicatorCustom();
           },
           loaded: (types) {
             List<TypeRus> allTypes = [];
@@ -119,9 +115,7 @@ class _FileAddViewState extends State<FileAddView> {
                         setState(
                           () {
                             selectType = allTypes.where((element) => element.rus == val!).first;
-                            image = null;
-                            video = null;
-                            audio = null;
+                            fileSelect = null;
                           },
                         );
                       },
@@ -131,17 +125,17 @@ class _FileAddViewState extends State<FileAddView> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        selectType != null &&
-                                (selectType!.type == "image" || selectType!.type == "gif")
-                            ? image != null
-                                ? SizedBox(height: 400, child: Image(image: MemoryImage(image!)))
-                                : const SizedBox()
-                            : selectType != null && selectType!.type == "video" && video != null
-                                ? SizedBox(height: 400, child: VideoContainer(videoFile: video!))
-                                : selectType != null && selectType!.type == "music" && audio != null
-                                    ? SizedBox(
-                                        height: 400, child: AudioContainer(audioFile: audio!))
-                                    : const SizedBox(),
+                        fileSelect != null
+                            ? SizedBox(
+                                height: 400,
+                                child: (selectType!.type == "image" || selectType!.type == "gif")
+                                    ? Image(image: MemoryImage(fileSelect!.readAsBytesSync()))
+                                    : selectType!.type == "video"
+                                        ? VideoContainer(videoFile: fileSelect!)
+                                        : selectType!.type == "music"
+                                            ? AudioContainer(audioFile: fileSelect!)
+                                            : const SizedBox())
+                            : const SizedBox(),
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 20),
                           child: Row(
@@ -151,22 +145,7 @@ class _FileAddViewState extends State<FileAddView> {
                                 onPressed: selectType == null
                                     ? null
                                     : () {
-                                        switch (selectType!.type) {
-                                          case "image":
-                                            selectImage();
-
-                                            break;
-                                          case "gif":
-                                            selectImage();
-                                            break;
-                                          case "video":
-                                            selectVideo();
-                                            break;
-                                          case "music":
-                                            selectAudio();
-                                            break;
-                                          default:
-                                        }
+                                        selectFile();
                                       },
                                 style: ElevatedButton.styleFrom(
                                   primary: AppColors.main,
@@ -176,12 +155,17 @@ class _FileAddViewState extends State<FileAddView> {
                                     : Text('Выбрать  ${selectType!.rus}'),
                               ),
                               ElevatedButton(
-                                onPressed: image == null && video == null && audio == null
+                                onPressed: fileSelect == null
                                     ? null
                                     : () {
                                         widget.onSave(
-                                            fileModel: FileLoadModel(
-                                                files: File.fromRawPath(image!).path));
+                                            fileModel: fileSelect!,
+                                            typeForFile: selectType!.type,
+                                            type: types
+                                                .where((element) =>
+                                                    element.attributes!.code == selectType!.type)
+                                                .first
+                                                .id);
                                       },
                                 style: ElevatedButton.styleFrom(
                                   primary: AppColors.main,
@@ -200,7 +184,7 @@ class _FileAddViewState extends State<FileAddView> {
           },
         );
       },
-    );
+    ));
   }
 }
 

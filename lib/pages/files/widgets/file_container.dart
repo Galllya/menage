@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:manage/common/ui/colors.dart';
+import 'package:manage/main.dart';
 import 'package:manage/pages/file_detail/view/file_detail_page.dart';
 
 class FileContainer extends StatelessWidget {
   final String code;
   final String url;
+  final int id;
   const FileContainer({
     Key? key,
     required this.code,
     required this.url,
+    required this.id,
   }) : super(key: key);
 
   @override
@@ -38,6 +41,7 @@ class FileContainer extends StatelessWidget {
                       title: title,
                       code: code,
                       url: url,
+                      id: id,
                     )));
       },
       child: Container(
@@ -58,7 +62,7 @@ class FileContainer extends StatelessWidget {
                 height: 10,
               ),
               code == "image" || code == "gif"
-                  ? Image(image: NetworkImage("http://10.0.2.2:1337$url"))
+                  ? Image(image: NetworkImage("$apiFile$url"))
                   : code == "video"
                       ? const Icon(
                           Icons.video_camera_front,

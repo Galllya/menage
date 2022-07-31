@@ -3,6 +3,7 @@ import 'package:manage/common/models/pagination.dart';
 import 'package:manage/domain/base_file.dart';
 import 'package:manage/domain/base_model.dart';
 import 'package:manage/domain/info_data_type_model.dart';
+import 'package:manage/domain/load_file_model.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'rest_client.g.dart';
@@ -34,9 +35,17 @@ abstract class RestClient {
   Future<Pagination<InfoDataTypeModel>> loadTypes();
 
   @POST('/upload')
-  Future<void> addFile({
-    @Body() required Map<String, dynamic> formData,
+  Future<List<LoadFileModel>> addFile({
+    @Body() required FormData formData,
     @Query('datatype') required String datatype,
     @Query('mimeType') required String mimeType,
+  });
+  @POST('/media-files')
+  Future<void> postMediaFiles({
+    @Body() required Map<String, dynamic> media,
+  });
+  @DELETE('/media-files/{id}')
+  Future<void> deleteFile({
+    @Path() required int id,
   });
 }

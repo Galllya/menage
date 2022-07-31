@@ -5,6 +5,7 @@ import 'package:manage/common/ui/colors.dart';
 import 'package:manage/pages/file_add/view/file_add_page.dart';
 import 'package:manage/pages/files/bloc/files_bloc.dart';
 import 'package:manage/pages/files/view/files_view.dart';
+import 'package:manage/pages/home/view/home_page.dart';
 
 class FilesPage extends StatefulWidget {
   const FilesPage({Key? key}) : super(key: key);
@@ -37,6 +38,12 @@ class _FilesPageState extends State<FilesPage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Файлы'),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()));
+            },
+            icon: const Icon(Icons.arrow_back),
+          ),
         ),
         floatingActionButton: CircleAvatar(
           backgroundColor: AppColors.main,

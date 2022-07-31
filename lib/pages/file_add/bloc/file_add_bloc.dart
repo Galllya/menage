@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:manage/common/repositories/media_repository.dart';
 import 'package:manage/common/repositories/type_repository.dart';
-import 'package:manage/domain/file_load_model.dart';
 import 'package:manage/domain/info_data_type_model.dart';
+import 'package:manage/domain/media_file_model.dart';
 
 part 'file_add_event.dart';
 part 'file_add_state.dart';
@@ -16,7 +18,7 @@ class FileAddBloc extends Bloc<FileAddEvent, FileAddState> {
   FileAddBloc({
     required this.typeRepository,
     required this.mediaRepository,
-  }) : super(_Initial());
+  }) : super(const _Initial());
   @override
   Stream<FileAddState> mapEventToState(
     FileAddEvent event,
@@ -47,13 +49,23 @@ class FileAddBloc extends Bloc<FileAddEvent, FileAddState> {
     );
   }
 
-  Stream<FileAddState> _addFile(FileLoadModel fileModel) async* {
+  Stream<FileAddState> _addFile(
+    File file,
+    int type,
+    String typeForFile,
+  ) async* {
     yield const FileAddState.processingAdd();
 
     yield* state.maybeWhen(
       processingAdd: () async* {
         try {
-          await mediaRepository.addFile(fileModel: fileModel);
+          final fileModel = await mediaRepository.addFile(file: file, type: typeForFile);
+          await mediaRepository.postMediaFiles(
+            mediaFileModel: MediaFileModel(
+              media: fileModel.first.id.toString(),
+              type: type,
+            ),
+          );
           yield const FileAddState.successAdd();
         } on DioError catch (e) {
           yield const FileAddState.errorAdd();

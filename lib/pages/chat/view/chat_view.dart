@@ -25,8 +25,11 @@ class _ChatViewState extends State<ChatView> {
   void initState() {
     widget.socket.on(
       "newMessage",
-      (data) => addMessage(data),
+      (data) {
+        addMessage(data);
+      },
     );
+
     super.initState();
   }
 
